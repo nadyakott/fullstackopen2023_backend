@@ -69,14 +69,15 @@ app.use(express.json())
 //     return newId
 // }
 
-app.get('/', (request, response) => {
+app.get('/', (request, response, next) => {
     response.send('<h1>Hello World!</h1>')
 })
 
-app.get('/api/persons', (request, response) => {
+app.get('/api/persons', (request, response, next) => {
     Person.find({}).then(persons => {
         response.json(persons)
     })
+        .catch(err => next(err))
 })
 
 app.get('/info', (request, response, next) => {
@@ -96,17 +97,17 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const { name, number } = request.body
+    const {name, number} = request.body
 
-  const person = {
-    name, number
-  }
+    const person = {
+        name, number
+    }
 
-  Person.findByIdAndUpdate(request.params.id, person, { new: true })
-    .then(updatedPerson => {
-      response.json(updatedPerson)
-    })
-    .catch(error => next(error))
+    Person.findByIdAndUpdate(request.params.id, person, {new: true})
+        .then(updatedPerson => {
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.post('/api/persons/', (request, response, next) => {
