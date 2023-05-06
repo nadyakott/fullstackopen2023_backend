@@ -12,8 +12,7 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({error: 'malformatted id'})
-    }
-    else if (error.name === 'ValidationError') {
+    } else if (error.name === 'ValidationError') {
         return response.status(400).json({error: error.message})
     }
 
@@ -27,50 +26,6 @@ app.use(morgan(':method :url :status :response-time ms :body'))
 app.use(cors())
 app.use(express.static('build'))
 app.use(express.json())
-
-// const url = process.env.MONGO_URI
-// console.log(url)
-//
-// mongoose.set('strictQuery',false)
-// mongoose.connect(url)
-//
-// const contactSchema = new mongoose.Schema({
-//   name: String,
-//   number: String,
-// })
-//
-// const Contact = mongoose.model('Contact', contactSchema)
-// let persons = [
-//     {
-//         "id": 1,
-//         "name": "Arto Hellas",
-//         "number": "040-123456"
-//     },
-//     {
-//         "id": 2,
-//         "name": "Ada Lovelace",
-//         "number": "39-44-5323523"
-//     },
-//     {
-//         "id": 3,
-//         "name": "Dan Abramov",
-//         "number": "12-43-234345"
-//     },
-//     {
-//         "id": 4,
-//         "name": "Mary Poppendieck",
-//         "number": "39-23-6423122"
-//     }
-// ]
-// const generateId = () => {
-//     const newId = Math.floor(Math.random() * 1000000000);
-//     person = persons.find(p => p.id === newId)
-//     while (person) {
-//         const newId = Math.floor(Math.random() * 1000000000);
-//         person = persons.find(p => p.id === newId)
-//     }
-//     return newId
-// }
 
 app.get('/', (request, response, next) => {
     response.send('<h1>Hello World!</h1>')
@@ -92,6 +47,7 @@ app.get('/info', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
     const id = request.params.id
+
     Person.findByIdAndRemove(id).then(res => {
         response.status(204).end()
     }).catch(err => next(err))
@@ -114,10 +70,10 @@ app.put('/api/persons/:id', (request, response, next) => {
 })
 
 app.post('/api/persons/', (request, response, next) => {
-        const {name, number} = req.body
+        const {name, number} = request.body
 
         if (!name) {
-            return res.status(400).json({
+            return response.status(400).json({
                 error: 'name missing'
             })
         }
@@ -126,7 +82,7 @@ app.post('/api/persons/', (request, response, next) => {
 
         person
             .save().then(savedPerson => {
-            res.json(savedPerson)
+            response.json(savedPerson)
         })
             .catch(error => next(error))
     }
