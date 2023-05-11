@@ -4,6 +4,12 @@ const dummy = (blogs) => {
     return 1
 }
 
+const lastLike = (blogs) => {
+    const lastAtBlogs = blogs.map(blog => blog.likes)
+    // console.log(lastAtBlogs.length)
+    return lastAtBlogs[lastAtBlogs.length - 1]
+}
+
 const totalLikes = (blogs) => {
     const reducer = (sum, item) => {
         return sum + item
@@ -41,5 +47,6 @@ module.exports = {
     totalLikes,
     favoriteBlog,
     mostBlogs,
-    mostLikes
+    mostLikes,
+    lastLike
 }
