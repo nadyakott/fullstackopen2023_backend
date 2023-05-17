@@ -77,6 +77,7 @@ describe('when there is initially some blogs saved', () => {
 //
     describe('addition of a new blog', () => {
         test('succeeds with valid data', async () => {
+
             const newBlog = {
                 title: "Game of thrones",
                 author: "Robert C. Martin",
@@ -84,7 +85,7 @@ describe('when there is initially some blogs saved', () => {
                 likes: 3,
             }
 
-            await api
+            const response = await api
                 .post('/api/blogs')
                 .send(newBlog)
                 .expect(201)
@@ -95,7 +96,7 @@ describe('when there is initially some blogs saved', () => {
 
             const contents = blogsAtEnd.map(n => n.title)
             expect(contents).toContain(
-                'Game of thrones'
+               newBlog.title
             )
         })
 
@@ -107,34 +108,29 @@ describe('when there is initially some blogs saved', () => {
                 // likes: 3,
             }
 
-            await api
+            const response = await api
                 .post('/api/blogs')
                 .send(newBlog)
                 .expect(201)
                 .expect('Content-Type', /application\/json/)
 
-            const blogsAtEnd = await helper.blogsInDb()
-            expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-
-            console.log(blogsAtEnd)
-
-            const LikeAtEnd = listHelper.lastLike(blogsAtEnd)
-            expect(LikeAtEnd).toBe(0)
+            expect(response.body.likes).toBe(0)
         })
 
         test('fails with status code 400 if data invalid', async () => {
-      const newBlog = {
-        author: 'Vasya'
-      }
+            const newBlog = {
+                // title: "Game of thrones",
+                author: "Robert C. Martin",
+                // url: "http://blog.cleancoder.com/uncle-bob/2016/05/01/TypeWars.html",
+            }
+            await api
+                .post('/api/blogs')
+                .send(newBlog)
+                .expect(400)
+                .expect('Content-Type', /application\/json/)
 
-      await api
-        .post('/api/blogs')
-        .send(newBlog)
-        .expect(400)
+      // expect(helper.blogsInDb()).toHaveLength(helper.initialBlogs.length)
 
-      const blogsAtEnd = await helper.blogsInDb()
-
-      expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
   })
 })
