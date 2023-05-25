@@ -1,10 +1,10 @@
 const router = require('express').Router()
-const Blogs = require('../models/blog')
+const Blog = require('../models/blog')
 
 const { userExtractor } = require('../utils/middleware')
 
 router.get('/', async (request, response) => {
-  const blogs = await Blogs
+  const blogs = await Blog
     .find({})
     .populate('user', { username: 1, name: 1 })
 
@@ -13,7 +13,7 @@ router.get('/', async (request, response) => {
 
 router.post('/', userExtractor, async (request, response) => {
   const { title, author, url, likes } = request.body
-  const blog = new Blogs({
+  const blog = new Blog({
     title, author, url,
     likes: likes ? likes : 0
   })
@@ -37,13 +37,13 @@ router.post('/', userExtractor, async (request, response) => {
 router.put('/:id', async (request, response) => {
   const { title, url, author, likes } = request.body
 
-  const updatedBlog = await Blogs.findByIdAndUpdate(request.params.id,  { title, url, author, likes }, { new: true })
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id,  { title, url, author, likes }, { new: true })
 
   response.json(updatedBlog)
 })
 
 router.delete('/:id', userExtractor, async (request, response) => {
-  const blog = await Blogs.findById(request.params.id)
+  const blog = await Blog.findById(request.params.id)
 
   const user = request.user
 
